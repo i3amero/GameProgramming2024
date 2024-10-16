@@ -9,7 +9,8 @@ public class PlayerShooting : MonoBehaviour
     public GameObject prefab1;
     public GameObject shootPoint;
     public GameObject shootPoint2;
-    
+    public GameObject shootPoint3;
+
     // Start is called before the first frame update
     void Start()
     {

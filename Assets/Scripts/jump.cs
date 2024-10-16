@@ -14,9 +14,12 @@ public class jump : MonoBehaviour
 
     Rigidbody body;                         // 컴포넌트에서 RigidBody를 받아올 변수
 
+    Animator anim;
+
     float h, v;
     void Start()
     {
+        anim = GetComponent<Animator>();
         body = GetComponent<Rigidbody>();   // GetComponent를 활용하여 body에 해당 오브젝트의 Rigidbody를 넣어준다.
     }
 
@@ -47,7 +50,9 @@ public class jump : MonoBehaviour
         {
             // body에 힘을 가한다(AddForce)
             // AddForce(방향, 힘을 어떻게 가할 것인가)
-            body.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            anim.SetBool("isJumping", true);
+            body.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            body.AddForce(Vector3.down, ForceMode.Impulse);
 
             // 땅에서 떨어졌으므로 isGround를 false로 바꿈
             isGround = false;
@@ -60,6 +65,7 @@ public class jump : MonoBehaviour
         // 부딪힌 물체의 태그가 "Ground"라면
         if (collision.gameObject.CompareTag("Ground"))
         {
+            anim.SetBool("isJumping", false);
             // isGround를 true로 변경
             isGround = true;
         }

@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class spawnrandom : MonoBehaviour
 {
-    // 위에서 언급한 Plane의 자식인 RespawnRange 오브젝트
     public GameObject rangeObject;
     BoxCollider rangeCollider;
     public GameObject enemy;
+    public int a = 0;
+    public GameObject win;
 
     private void Awake()
     {
         rangeCollider = rangeObject.GetComponent<BoxCollider>();
+
     }
 
     Vector3 Return_RandomPosition()
@@ -51,6 +54,11 @@ public class spawnrandom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (a == 10)
+        {
+            Debug.Log("게임클리어");
+            win.SetActive(true);
+            a = 0;
+        }
     }
 }

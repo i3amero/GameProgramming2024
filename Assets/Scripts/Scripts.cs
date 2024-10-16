@@ -10,24 +10,38 @@ public class Scripts : MonoBehaviour
     public float mouseSpeed;
     float yRotation;
     float xRotation;
-    public float moveSpeed;
-    float h;
-    float v;
+    float x;
+    float y;
+    float moveSpeed = 20.0f;
     Rigidbody rb;
+    Animator anim;
+    public Camera cam;
+    GameObject a;
+    int cnt;
 
     void Start()
     {
+        cam = Camera.main;
+        anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;   // 마우스 커서를 화면 안에서 고정
         Cursor.visible = false;                     // 마우스 커서를 보이지 않도록 설정
+
     }
 
     void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
             moveSpeed = moveSpeed * 2;
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+            anim.SetBool("isRunning", true);
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
             moveSpeed = moveSpeed / 2;
+            anim.SetBool("isRunning", false);
+        }
         Rotate();
         Move();
     }
@@ -45,13 +59,37 @@ public class Scripts : MonoBehaviour
     }
     void Move()
     {
-        h = Input.GetAxisRaw("Horizontal"); // 수평 이동 입력 값
-        v = Input.GetAxisRaw("Vertical");   // 수직 이동 입력 값
+        float x = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime;
+        float y = Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime;
 
-        // 입력에 따라 이동 방향 벡터 계산
-        Vector3 moveVec = transform.forward * v + transform.right * h;
+        if (x != 0 || y != 0)
+        {
+            anim.SetBool("isWalking", true);
+        }
+        else
+        {
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isWalking", false);
+        }
+        Vector3 vec = new Vector3(x, 0, y);
 
-        // 이동 벡터를 정규화하여 이동 속도와 시간 간격을 곱한 후 현재 위치에 더함
-        rb.transform.position += moveVec.normalized * moveSpeed * Time.deltaTime;
+        rb.AddRelativeForce(Vector3.Normalize(vec), ForceMode.VelocityChange);
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        float x = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime;
+        float y = Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime;
+        Vector3 vec = new Vector3(x, 0, y);
+        if (other.tag == "trap")
+            rb.velocity = new Vector3(1, 0, 1);
+        if (other.tag == "fast")
+            rb.AddRelativeForce(Vector3.Normalize(vec * 10), ForceMode.Impulse);
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "fast")
+            moveSpeed = moveSpeed / 2;
     }
 }
