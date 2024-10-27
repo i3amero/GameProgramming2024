@@ -5,19 +5,14 @@ using UnityEngine.EventSystems;
 
 public class Scripts : MonoBehaviour
 {
-
     [Header("Rotate")]
-    public float mouseSpeed;
-    float yRotation;
-    float xRotation;
-    float x;
-    float y;
-    float moveSpeed = 20.0f;
-    Rigidbody rb;
-    Animator anim;
+    public float mouseSpeed = 100f;  // 마우스 감도
+    private float moveSpeed = 20f;    // 이동 속도
+    private float yRotation;
+    private float xRotation;
+    private Rigidbody rb;
+    private Animator anim;
     public Camera cam;
-    GameObject a;
-    int cnt;
 
     void Start()
     {
@@ -26,24 +21,28 @@ public class Scripts : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;   // 마우스 커서를 화면 안에서 고정
         Cursor.visible = false;                     // 마우스 커서를 보이지 않도록 설정
-
+        rb.freezeRotation = true;                   // Rigidbody의 회전을 잠금
     }
 
     void Update()
     {
+        HandleRunning();
+        Rotate();
+        Move();
+    }
 
+    void HandleRunning()
+    {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            moveSpeed = moveSpeed * 2;
+            moveSpeed *= 2;
             anim.SetBool("isRunning", true);
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            moveSpeed = moveSpeed / 2;
+            moveSpeed /= 2;
             anim.SetBool("isRunning", false);
         }
-        Rotate();
-        Move();
     }
 
     void Rotate()
@@ -51,18 +50,27 @@ public class Scripts : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X") * mouseSpeed * Time.deltaTime;
         float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSpeed * Time.deltaTime;
 
-        yRotation += mouseX;    // 마우스 X축 입력에 따라 수평 회전 값을 조정
-        xRotation -= mouseY;    // 마우스 Y축 입력에 따라 수직 회전 값을 조정
+        yRotation += mouseX;
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);  // 수직 회전 값을 -90도에서 90도 사이로 제한
-        transform.rotation = Quaternion.Euler(0, yRotation, 0);             // 플레이어 캐릭터의 회전을 조절
+        // 캐릭터의 수평 회전 및 카메라의 수직 회전 설정
+        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        cam.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
+
     void Move()
     {
-        float x = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime;
-        float y = Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime;
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (x != 0 || y != 0)
+        // 카메라 방향을 기준으로 이동 벡터 설정
+        Vector3 moveDirection = cam.transform.forward * verticalInput + cam.transform.right * horizontalInput;
+        moveDirection.y = 0; // y축 이동 방지
+        moveDirection.Normalize();
+
+        // 애니메이션 설정
+        if (moveDirection != Vector3.zero)
         {
             anim.SetBool("isWalking", true);
         }
@@ -71,25 +79,22 @@ public class Scripts : MonoBehaviour
             anim.SetBool("isRunning", false);
             anim.SetBool("isWalking", false);
         }
-        Vector3 vec = new Vector3(x, 0, y);
 
-        rb.AddRelativeForce(Vector3.Normalize(vec), ForceMode.VelocityChange);
-
+        // Rigidbody 속도를 카메라 기준 이동 방향으로 설정
+        rb.velocity = moveDirection * moveSpeed;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        float x = Input.GetAxisRaw("Horizontal") * moveSpeed * Time.deltaTime;
-        float y = Input.GetAxisRaw("Vertical") * moveSpeed * Time.deltaTime;
-        Vector3 vec = new Vector3(x, 0, y);
-        if (other.tag == "trap")
+        if (other.CompareTag("trap"))
             rb.velocity = new Vector3(1, 0, 1);
-        if (other.tag == "fast")
-            rb.AddRelativeForce(Vector3.Normalize(vec * 10), ForceMode.Impulse);
+        else if (other.CompareTag("fast"))
+            moveSpeed *= 2;
     }
+
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "fast")
-            moveSpeed = moveSpeed / 2;
+        if (other.CompareTag("fast"))
+            moveSpeed /= 2;
     }
 }
