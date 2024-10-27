@@ -8,6 +8,7 @@ TagManager:
   - Wall
   - trap
   - fast
+  - Player1
   layers:
   - Default
   - TransparentFX
