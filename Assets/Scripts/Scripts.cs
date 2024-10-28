@@ -7,7 +7,7 @@ public class Scripts : MonoBehaviour
 {
     [Header("Rotate")]
     public float mouseSpeed = 100f;  // 마우스 감도
-    private float moveSpeed = 20f;    // 이동 속도
+    private float moveSpeed = 40f;    // 이동 속도
     private float yRotation;
     private float xRotation;
     private Rigidbody rb;

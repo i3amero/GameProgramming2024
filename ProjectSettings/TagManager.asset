@@ -9,6 +9,7 @@ TagManager:
   - trap
   - fast
   - Player1
+  - base
   layers:
   - Default
   - TransparentFX
