@@ -10,6 +10,8 @@ public class PlayerShooting : MonoBehaviour
     public GameObject shootPoint;
     public GameObject shootPoint2;
     public GameObject shootPoint3;
+    public AudioSource shootSound;
+    public AudioSource shootSound2;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +25,7 @@ public class PlayerShooting : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
             GameObject clone = Instantiate(prefab);
             GameObject clone2 = Instantiate(prefab);
+            shootSound.Play();
             clone.transform.position = shootPoint.transform.position;
             clone.transform.rotation = shootPoint.transform.rotation;
             clone2.transform.position = shootPoint2.transform.position;
@@ -33,6 +36,7 @@ public class PlayerShooting : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             GameObject clone = Instantiate(prefab1);
+            shootSound2.Play();
             clone.transform.position = shootPoint.transform.position;
             clone.transform.rotation = shootPoint.transform.rotation;
             Destroy(clone, 1);

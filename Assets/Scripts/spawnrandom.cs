@@ -10,6 +10,8 @@ public class spawnrandom : MonoBehaviour
     public GameObject enemy;
     public int a = 0;
     public GameObject win;
+    public GameObject text;
+    public float timer;
 
     private void Awake()
     {
@@ -56,6 +58,7 @@ public class spawnrandom : MonoBehaviour
     {
         if (a == 10)
         {
+            text.SetActive(false); 
             Debug.Log("게임클리어");
             win.SetActive(true);
             a = 0;

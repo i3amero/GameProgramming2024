@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class T : MonoBehaviour
 {
-    float timer = 120;
+    public float timer = 120;
     public TextMeshProUGUI A;
     public GameObject lose;
     // Start is called before the first frame update
@@ -25,6 +25,7 @@ public class T : MonoBehaviour
         if (timer < 0)
         {
             timer = 0;
+            A.text = $"{timer}";
             Debug.Log("게임 오바");
             lose.SetActive(true);
         }

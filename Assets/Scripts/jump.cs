@@ -25,7 +25,6 @@ public class jump : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move();
         Jump();
     }
 
@@ -46,16 +45,16 @@ public class jump : MonoBehaviour
     void Jump()
     {
         // 스페이스바를 누르면(또는 누르고 있으면), 그리고 캐릭터가 땅에 있다면
-        if (Input.GetKey(KeyCode.Space) && isGround)
+        if (Input.GetKey(KeyCode.Space) && isGround == true)
         {
             // body에 힘을 가한다(AddForce)
             // AddForce(방향, 힘을 어떻게 가할 것인가)
             anim.SetBool("isJumping", true);
-            body.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
-            body.AddForce(Vector3.down, ForceMode.Impulse);
+            body.AddForce(Vector3.up * jumpForce * 30, ForceMode.Impulse);
 
             // 땅에서 떨어졌으므로 isGround를 false로 바꿈
             isGround = false;
+            body.AddForce(Vector3.down * jumpForce * 10, ForceMode.Impulse);
         }
     }
 

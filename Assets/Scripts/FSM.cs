@@ -8,11 +8,11 @@ public class FSM : MonoBehaviour
     public EnemyState currentState;
     public Transform target;               // 추적할 타겟 (플레이어)
     public Transform basement;               // 추적할 타겟 (베이스)
-    public float chaseDistance = 10f;      // 추적 시작 거리
+    public float chaseDistance = 20f;      // 추적 시작 거리
     public float attackDistance = 2f;      // 공격 시작 거리
     public float moveSpeed = 20f;           // 이동 속도
     private Rigidbody rb;
-    private Animator anim;
+    public Animator anim;
     public float Speed1;
     public float Speed2;
     int i = 0;
@@ -58,7 +58,7 @@ public class FSM : MonoBehaviour
         {
             currentState = EnemyState.ChasePlayer;
         }
-        else if (distanceToTarget2 <= chaseDistance)
+        else if (distanceToTarget2 <= attackDistance)
         {
             currentState = EnemyState.GotoBase;
         }
